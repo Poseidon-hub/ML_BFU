@@ -1,6 +1,6 @@
 import csv
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
+import matplotlib.patches as patches
 
 def calculate_stats(data):
     return {
@@ -78,21 +78,25 @@ ax2.set_ylabel('Y')
 ax2.grid(True)
 
 # Квадраты ошибок
-ax3.scatter(x_data, y_data, color='blue')
-ax3.plot([x_min, x_max], [y_pred_min, y_pred_max], color='red')
+ax3.scatter(x_data, y_data, color='red', zorder=3)  # Точки
+ax3.plot([x_min, x_max], [y_pred_min, y_pred_max], color='blue', zorder=2)  # Линия регрессии
 
 for xi, yi in zip(x_data, y_data):
     y_pred_i = a * xi + b
-    error = yi - y_pred_i
-    # Вертикальная линия ошибки
-    ax3.vlines(xi, y_pred_i, yi, color='green', linestyle='--', alpha=0.5)
-    # Прямоугольник для квадрата ошибки
-    width = 0.1  # Настройте ширину при необходимости
-    height = abs(error)
-    lower_y = min(yi, y_pred_i)
-    rect = Rectangle((xi - width/2, lower_y), width, height,
-                     edgecolor='green', facecolor='green', alpha=0.1)
-    ax3.add_patch(rect)
+    error = abs(y_pred_i - yi)  # Величина ошибки (сторона квадрата)
+
+    # Вертикальная линия от точки до регрессионной прямой
+    ax3.vlines(xi, min(yi, y_pred_i), max(yi, y_pred_i), color='black', linestyle='--')
+
+    # Нижний левый угол квадрата (смещаем влево от вертикальной линии на величину ошибки)
+    rect_x = xi - error
+    rect_y = min(yi, y_pred_i)  # Нижняя граница квадрата
+
+    # Создаем квадрат (ширина = высота = error)
+    square = patches.Rectangle((rect_x, rect_y), error, error, facecolor='red', alpha=0.3, edgecolor='black')
+
+    # Добавляем квадрат на график
+    ax3.add_patch(square)
 
 ax3.set_title('Квадраты ошибок')
 ax3.set_xlabel('X')
