@@ -12,9 +12,8 @@ def calculate_stats(data):
 
 # Чтение данных из файла
 filename = 'student_scores.csv'
-x_col = 0
-y_col = 1
-
+x_col = int(input('Для X введите колонку 0 или 1: '))
+y_col = int(input('Для Y введите колонку 0 или 1: '))
 x_data = []
 y_data = []
 
